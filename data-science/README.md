@@ -16,6 +16,16 @@ pip install -r requirements.txt
 
 ## Ejecución
 
+Para entrenar el modelo
+```bash
+python src/train.py
+```
+
+Para evaluar el modelo
+```bash
+python src/evaluate.py
+```
+
 Para correr el programa usar el siguiente comando:
 ```bash
 uvicorn src.main:app --reload
