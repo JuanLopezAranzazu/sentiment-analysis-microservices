@@ -1,0 +1,40 @@
+services:
+
+  postgres:
+    image: postgres:13
+    container_name: sentiment-postgres
+    environment:
+      POSTGRES_DB: sentimentdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  data-science:
+    build: ./data-science
+    container_name: sentiment-ml
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: src/main/docker/Dockerfile.jvm
+    container_name: sentiment-backend
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/sentimentdb
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      ML_SERVICE_URL: http://data-science:8000
+    depends_on:
+      - postgres
+      - data-science
+
+volumes:
+  postgres_data:
